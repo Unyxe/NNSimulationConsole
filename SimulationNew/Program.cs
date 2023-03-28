@@ -12,29 +12,54 @@ namespace SimulationNew
     internal class MainSimulation
     {
         static Random rn = new Random();
-        public static int width = 32;
-        public static int height = 32;
+        public static int width = 100;
+        public static int height = 60;
         public static List<Cell> cells = new List<Cell>();
+        public static List<Cell> cells_to_remove = new List<Cell>();
+        public static List<Cell> cells_to_add = new List<Cell>();
         static void Main(string[] args)
         {
-            NeuralNetwork test_nn = new NeuralNetwork(5,5, 2, 3, rn.Next(), false);
+            /*
+            NeuralNetwork test_nn = new NeuralNetwork(1,5, 4, 3, rn.Next(), false);
             for(int i = 0; i < 500; i++)
             {
-                double[] output = test_nn.CalculateOutput(new double[] { rn.NextDouble(), rn.NextDouble() });
-                Console.WriteLine(output[0] + "\t" + output[1] + "\t" + output[2]);
+                double[] output = test_nn.CalculateOutput(new double[] { rn.NextDouble(), rn.NextDouble(), rn.NextDouble(), rn.NextDouble() });
+                Console.WriteLine(output[0] + "    " + output[1] + "    " + output[2]);
             }
-            /*
+            */
+            
             Console.ReadLine();
-            Cell test_cell = new Cell(5, 5, rn.Next());
+            for(int i = 0; i < width*height/3; i++)
+            {
+                int x_s = rn.Next() % width;
+                int y_s = rn.Next() % height;
+                if(GetCellFromCoord(x_s, y_s) != null)
+                {
+                    continue;
+                }
+                cells.Add(new Cell(x_s, y_s, rn.Next()));
+            }
             while (true)
             {
-                cells.Add(test_cell);
-                cells[0].NextMove();
+                cells_to_remove.Clear();
+                cells_to_add.Clear();
+                foreach(Cell c in cells)
+                {
+                    c.NextMove();
+                }
+                foreach(Cell c in cells_to_remove)
+                {
+                    cells.Remove(c);
+                }
+                foreach (Cell c in cells_to_add)
+                {
+                    cells.Add(c);
+                }
                 DisplayCells();
                 Console.ReadLine();
                 Console.Clear();
             }
-            */
+            
             Console.ReadLine();
         }
 
@@ -77,6 +102,19 @@ namespace SimulationNew
             }
             Console.SetCursorPosition(x, y + 1);
         }
+
+
+        public static Cell GetCellFromCoord(int x_w, int y_w)
+        {
+            foreach (Cell cell in cells)
+            {
+                if (cell.x == x_w && cell.y == y_w)
+                {
+                    return cell;
+                }
+            }
+            return null;
+        }
     }
 
 
@@ -88,21 +126,40 @@ namespace SimulationNew
         public int height;
         public Vector2 direction = new Vector2(0, 1);
         public NeuralNetwork nn;
+        public int energy = 30;
+        Random rn;
         public Cell(int x, int y, int seed)
         {
             this.x = x;
             this.y = y;
             width = MainSimulation.width;
             height = MainSimulation.height;
-            nn = new NeuralNetwork(5, 5, 2, 3, seed, false);
+            rn = new Random(seed);
+            nn = new NeuralNetwork(5, 5, 4, 5, seed, false);
+        }
+        public Cell(int x, int y, int seed, NeuralNetwork nn_)
+        {
+            this.x = x;
+            this.y = y;
+            width = MainSimulation.width;
+            height = MainSimulation.height;
+            rn = new Random(seed);
+            nn = new NeuralNetwork(5, 5, 4, 5, seed, false);
+            nn.SetBiases(nn_.ExportBiases());
+            nn.SetWeights(nn_.ExportWeights());
+            if(rn.Next()%1000 < 250)
+            {
+                nn.Mutate(1);
+            }
         }
 
         public void NextMove()
         {
-            double[] input = new double[2] {x / (double)width, y/(double)height };
+            energy--;
+            double[] input = new double[4] {direction.X, direction.Y, (y*1.0)/height, energy/100.0};
             double[] output = nn.CalculateOutput(input);
-            Console.WriteLine(input[0] + "\t" + input[1]);
-            Console.WriteLine(output[0] + "\t" + output[1] + "\t" + output[2]);
+            //Console.WriteLine(input[0] + "\t" + input[1] + "\t" + input[2] + "\t" + input[3]);
+            //Console.WriteLine(output[0] + "\t" + output[1] + "\t" + output[2]);
             int choice = 0;
             double max = -1;
             for(int i = 0; i < output.Length; i++)
@@ -144,15 +201,83 @@ namespace SimulationNew
                     }
                     Move();
                     break;
+                case 3:
+                    Photosynthesis();
+                    break;
+                case 4:
+                    Breed();
+                    break;
+            }
+
+            if(energy < 0)
+            {
+                MainSimulation.cells_to_remove.Add(this);
             }
         }
 
+        void Photosynthesis()
+        {
+            int add_energy = y / (height / 10);
+            if(add_energy <= 0)
+            {
+                return;
+            }
+            energy += add_energy;
+            if(energy > 100)
+            {
+                energy = 100;
+            }
+        }
+        void Breed()
+        {
+            int x_s = x + (int)direction.X;
+            int y_s = y + (int)direction.Y;
+
+            if (CheckPosition(x_s, y_s, false) && energy >= 30)
+            {
+                energy -= 30;
+                MainSimulation.cells_to_add.Add(new Cell(x_s, y_s, rn.Next(), nn));
+            }
+        }
         void Move()
         {
-            x += (int)direction.X;
-            y += (int)direction.Y;
+            int x_w = x + (int)direction.X;
+            int y_w = y + (int)direction.Y;
+            if (CheckPosition(x_w, y_w, false))
+            {
+                x += (int)direction.X;
+                y += (int)direction.Y;
+            }
         }
-
+        bool CheckPosition(int w_x, int w_y, bool check_occup)
+        {
+            if ((w_x < width && w_y < height && w_x >= 0 && w_y >= 0))
+            {
+                bool is_occupied = false;
+                Cell cell = GetCellFromCoord(w_x, w_y);
+                if(cell != null)
+                {
+                    is_occupied = true;
+                }
+                if (check_occup)
+                {
+                    return is_occupied;
+                }
+                return !is_occupied;
+            }
+            return false;
+        }
+        public Cell GetCellFromCoord(int x_w, int y_w)
+        {
+            foreach (Cell cell in MainSimulation.cells)
+            {
+                if (cell.x == x_w && cell.y == y_w)
+                {
+                    return cell;
+                }
+            }
+            return null;
+        }
     }
     public class Neuron
     {
@@ -200,7 +325,7 @@ namespace SimulationNew
             if (is_output)
             {
                 //Console.WriteLine("hi");
-                return output_sum;
+                return output_sum / input.Length;
             }
             if(output_sum / input.Length>= 0.5)
             {
@@ -350,7 +475,7 @@ namespace SimulationNew
                         next_input[j] = NN[i][j].calculate_output_from_input(current_input, true);
                         continue;
                     }
-                    next_input[j] = NN[i][j].calculate_output_from_input(current_input, false);
+                    next_input[j] = NN[i][j].calculate_output_from_input(current_input, true);
 
                 }
                 current_input = new double[next_input.Length];

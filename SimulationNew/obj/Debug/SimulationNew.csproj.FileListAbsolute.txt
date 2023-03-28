@@ -6,3 +6,10 @@ C:\Users\lucky\source\repos\SimulationNew\SimulationNew\obj\Debug\SimulationNew.
 C:\Users\lucky\source\repos\SimulationNew\SimulationNew\obj\Debug\SimulationNew.csproj.CoreCompileInputs.cache
 C:\Users\lucky\source\repos\SimulationNew\SimulationNew\obj\Debug\SimulationNew.exe
 C:\Users\lucky\source\repos\SimulationNew\SimulationNew\obj\Debug\SimulationNew.pdb
+\\lutcfs01.lutc.internal\student$\TPerfilov\Documents\Visual Studio 2019\NNSimulationConsole-main\SimulationNew\bin\Debug\SimulationNew.exe.config
+\\lutcfs01.lutc.internal\student$\TPerfilov\Documents\Visual Studio 2019\NNSimulationConsole-main\SimulationNew\bin\Debug\SimulationNew.exe
+\\lutcfs01.lutc.internal\student$\TPerfilov\Documents\Visual Studio 2019\NNSimulationConsole-main\SimulationNew\bin\Debug\SimulationNew.pdb
+\\lutcfs01.lutc.internal\student$\TPerfilov\Documents\Visual Studio 2019\NNSimulationConsole-main\SimulationNew\obj\Debug\SimulationNew.csproj.CoreCompileInputs.cache
+\\lutcfs01.lutc.internal\student$\TPerfilov\Documents\Visual Studio 2019\NNSimulationConsole-main\SimulationNew\obj\Debug\SimulationNew.exe
+\\lutcfs01.lutc.internal\student$\TPerfilov\Documents\Visual Studio 2019\NNSimulationConsole-main\SimulationNew\obj\Debug\SimulationNew.pdb
+\\lutcfs01.lutc.internal\student$\TPerfilov\Documents\Visual Studio 2019\NNSimulationConsole-main\SimulationNew\obj\Debug\SimulationNew.csprojAssemblyReference.cache
