@@ -1,0 +1,8 @@
+C:\Users\lucky\source\repos\SimulationNew\SimulationNew\bin\Debug\SimulationNew.exe.config
+C:\Users\lucky\source\repos\SimulationNew\SimulationNew\bin\Debug\SimulationNew.exe
+C:\Users\lucky\source\repos\SimulationNew\SimulationNew\bin\Debug\SimulationNew.pdb
+C:\Users\lucky\source\repos\SimulationNew\SimulationNew\obj\Debug\SimulationNew.csproj.AssemblyReference.cache
+C:\Users\lucky\source\repos\SimulationNew\SimulationNew\obj\Debug\SimulationNew.csproj.SuggestedBindingRedirects.cache
+C:\Users\lucky\source\repos\SimulationNew\SimulationNew\obj\Debug\SimulationNew.csproj.CoreCompileInputs.cache
+C:\Users\lucky\source\repos\SimulationNew\SimulationNew\obj\Debug\SimulationNew.exe
+C:\Users\lucky\source\repos\SimulationNew\SimulationNew\obj\Debug\SimulationNew.pdb
